@@ -3,37 +3,47 @@ package main
 import "fmt"
 
 type Salutation struct {
-  name string
-  greeting string
+	name     string
+	greeting string
 }
 
+type Printer func(string) // doesnt return anything
+
 const (
-  PI = 3.14
-  Language = "Go"
+	PI       = 3.14
+	Language = "Go"
 )
 
 const (
-  A = iota
-  B
-  C
+	A = iota
+	B
+	C
 )
 
-func Greet(salutation Salutation) {
-  _, alternateMessage := CreateMessage(salutation.name, salutation.greeting)
-  fmt.Println(alternateMessage)
+func Greet(salutation Salutation, do Printer) {
+	message, alternateMessage := CreateMessage(salutation.name, salutation.greeting, "yo")
+	do(message)
+	do(alternateMessage)
 }
 
-func CreateMessage(name, greeting string) (message string, alternate string) {
-  message = greeting + " " + name
-  alternate = "HEY! "  + name
-  return
+func CreateMessage(name string, greeting ...string) (message string, alternate string) {
+	fmt.Println(len(greeting))
+	message = greeting[0] + " " + name
+	alternate = "HEY! " + name
+	return
 }
 
-func main()  {
-  var s = Salutation { "John", "Hello!" }
-  Greet(s)
+func CreatePrintFunction(custom string) Printer {
+	return func(s string) {
+		fmt.Println(s + custom)
+	}
+}
 
-  fmt.Println(PI)
-  fmt.Println(Language)
-  fmt.Println(A, B, C)
+func main() {
+	var s = Salutation{"John", "Hello!"}
+	Greet(s, CreatePrintFunction("!!!"))
+
+	fmt.Println(PI)
+	fmt.Println(Language)
+	fmt.Println(A, B, C)
 }
